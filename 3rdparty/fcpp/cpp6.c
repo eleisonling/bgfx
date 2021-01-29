@@ -168,7 +168,7 @@ void fpp_scanid(struct Global *global,
   do
     {
       if (ct == global->tokenbsize)
-        global->tokenbuf = realloc(global->tokenbuf, 1 +
+        global->tokenbuf = (char*)realloc(global->tokenbuf, 1 +
                                    (global->tokenbsize *= 2));
       global->tokenbuf[ct++] = c;
       c = fpp_get(global);
@@ -487,7 +487,7 @@ char *fpp_savestring(struct Global *global, char *text)
    */
   char *result;
   (void)global; // BK - not used but causes warning.
-  result = malloc(strlen(text) + 1);
+  result = (char*)malloc(strlen(text) + 1);
   strcpy(result, text);
   return (result);
 }
@@ -552,7 +552,7 @@ DEFBUF *fpp_lookid(struct Global *global,
   ct = 0;
   do {
     if (ct == global->tokenbsize)
-      global->tokenbuf = realloc(global->tokenbuf, 1 + (global->tokenbsize *= 2));
+      global->tokenbuf = (char*)realloc(global->tokenbuf, 1 + (global->tokenbsize *= 2));
     global->tokenbuf[ct++] = c;         /* Store token byte     */
     nhash += c;                         /* Update hash value    */
     c = fpp_get(global);
@@ -574,13 +574,13 @@ DEFBUF *fpp_lookid(struct Global *global,
 
 DEFBUF *fpp_defendel(struct Global *global,
                  char *name,
-                 int delete)            /* FPP_TRUE to delete a symbol */
+                 int del)            /* FPP_TRUE to del a symbol */
 {
   /*
-   * Enter this name in the lookup table (delete = FPP_FALSE)
-   * or delete this name (delete = FPP_TRUE).
-   * Returns a pointer to the define block (delete = FPP_FALSE)
-   * Returns NULL if the symbol wasn't defined (delete = FPP_TRUE).
+   * Enter this name in the lookup table (del = FPP_FALSE)
+   * or del this name (del = FPP_TRUE).
+   * Returns a pointer to the define block (del = FPP_FALSE)
+   * Returns NULL if the symbol wasn't defined (del = FPP_TRUE).
    */
 
   DEFBUF *dp;
@@ -610,7 +610,7 @@ DEFBUF *fpp_defendel(struct Global *global,
     }
     prevp = &dp->link;
   }
-  if (!delete) {
+  if (!del) {
     dp = (DEFBUF *) malloc(sizeof (DEFBUF) + size);
     dp->link = *prevp;
     *prevp = dp;
@@ -1102,7 +1102,7 @@ void fpp_domsg(struct Global *global,
 
   char *tp;
   FILEINFO *file;
-  char *severity=error<BORDER_ERROR_WARN?"Error":
+  const char *severity=error<BORDER_ERROR_WARN?"Error":
     error<BORDER_WARN_FATAL?"Warning":
       "Fatal";
 
@@ -1124,7 +1124,7 @@ void fpp_domsg(struct Global *global,
 
   if (file)   /*OIS*0.92*/
     while ((file = file->parent) != NULL) { /* Print #includes, too */
-      tp = file->parent ? "," : ".";
+      tp = file->parent ? (char*)"," : (char*)".";
       if (file->fp == NULL)
         fpp_Error(global, " from macro %s%s\n", file->filename, tp);
       else

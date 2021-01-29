@@ -84,10 +84,10 @@ int fppPreProcess(struct fppTag *tags)
 #endif
 
   /* Note: order is important   */
-  global->magic[0] = "__LINE__";
-  global->magic[1] = "__FILE__";
-  global->magic[2] = "__FUNCTION__";
-  global->magic[3] = "__FUNC_LINE__";
+  global->magic[0] = (char*)"__LINE__";
+  global->magic[1] = (char*)"__FILE__";
+  global->magic[2] = (char*)"__FUNCTION__";
+  global->magic[3] = (char*)"__FUNC_LINE__";
   global->magic[4] = NULL;                        /* Must be last       */
 
   global->funcline = 0;
@@ -189,11 +189,11 @@ ReturnCode fpp_cppmain(struct Global *global)
 
   /* Initialize for reading tokens */
   global->tokenbsize = 50;
-  global->tokenbuf = malloc(global->tokenbsize + 1);
+  global->tokenbuf = (char*)malloc(global->tokenbsize + 1);
   if(!global->tokenbuf)
     return(FPP_OUT_OF_MEMORY);
 
-  global->functionname = malloc(global->tokenbsize + 1);
+  global->functionname = (char*)malloc(global->tokenbsize + 1);
   if(!global->functionname)
     return(FPP_OUT_OF_MEMORY);
   global->functionname[0] = '\0';
